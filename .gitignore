@@ -1,0 +1,6 @@
+# configuration files
+account.txt
+authorization.txt
+
+# job downloads
+jobfiles-*
