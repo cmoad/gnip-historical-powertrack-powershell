@@ -74,8 +74,12 @@ $powertrack = New-Module -AsCustomObject -ScriptBlock `
     }
 
     Function DownloadFiles($jobid) {
-        $response = Invoke-RestMethod -Method Get -Uri "https://historical.gnip.com/accounts/$account/publishers/twitter/historical/track/jobs/$jobid/results.json" `
+        [void][System.Reflection.Assembly]::LoadWithPartialName("System.Web.Extensions")        
+        $jsonserial= New-Object -TypeName System.Web.Script.Serialization.JavaScriptSerializer 
+        $jsonserial.MaxJsonLength  = 10000000
+        $responseRaw = Invoke-WebRequest -Method Get -Uri "https://historical.gnip.com/accounts/$account/publishers/twitter/historical/track/jobs/$jobid/results.json" `
             -Headers $headers -ContentType "application/json"
+        $response = $jsonserial.DeserializeObject($responseRaw.Content)
 
         echo "Job contains $($response.urlCount) files with total size of $([math]::Round($response.totalFileSizeBytes / 1024 / 1024, 2)) MB"
 
