@@ -56,9 +56,14 @@ $powertrack = New-Module -AsCustomObject -ScriptBlock `
     }
 
     Function RequestJob($file) {
-        $response = Invoke-RestMethod -Method POST -Uri "https://historical.gnip.com/accounts/$account/jobs.json" `
-           -Headers $headers -ContentType "application/json" -InFile $file
-        echo $response
+        try {
+            $response = Invoke-RestMethod -Method POST -Uri "https://historical.gnip.com/accounts/$account/jobs.json" `
+               -Headers $headers -ContentType "application/json" -InFile $file
+        } catch {
+            $response = $_.Exception.Response.GetResponseStream()
+            $reader = New-Object System.IO.StreamReader($response.GetResponseStream())
+            echo $reader.ReadToEnd()
+        }
     }
 
     Function AcceptJob($jobid) {
