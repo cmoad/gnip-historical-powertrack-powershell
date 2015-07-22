@@ -61,7 +61,7 @@ $powertrack = New-Module -AsCustomObject -ScriptBlock `
                -Headers $headers -ContentType "application/json" -InFile $file
         } catch {
             $response = $_.Exception.Response.GetResponseStream()
-            $reader = New-Object System.IO.StreamReader($response.GetResponseStream())
+            $reader = New-Object System.IO.StreamReader($response)
             echo $reader.ReadToEnd()
         }
     }
