@@ -21,6 +21,7 @@ AVAILABLE COMMANDS:
     ... accept-job -jobid <jobid>
     ... reject-job -jobid <jobid>
     ... download-files -jobid <jobid>
+    ... accept-all-quoted
 
 CONFIGURATION:
     Make sure there is an authorization.txt file in this directory with one line that has
@@ -110,6 +111,26 @@ $powertrack = New-Module -AsCustomObject -ScriptBlock `
             }
         }
     }
+
+    Function AcceptAllQuoted() {
+        $response = Invoke-RestMethod -Method Get -Uri "https://historical.gnip.com/accounts/$account/jobs.json" `
+           -Headers $headers -ContentType "application/json"
+        foreach ($job in $response.jobs) {
+            if ($job.status -eq "quoted") {
+                AcceptJob($job.uuid)
+            }
+        }
+    }
+
+    Function DownloadAllDelivered() {
+        $response = Invoke-RestMethod -Method Get -Uri "https://historical.gnip.com/accounts/$account/jobs.json" `
+           -Headers $headers -ContentType "application/json"
+        foreach ($job in $response.jobs) {
+            if ($job.status -eq "delivered") {
+                DownloadFiles($job.uuid)
+            }
+        }
+    }
 }
 
 switch ($command)
@@ -120,6 +141,8 @@ switch ($command)
     "accept-job" { $powertrack.AcceptJob($jobid) }
     "reject-job" { $powertrack.RejectJob($jobid) }
     "download-files" { $powertrack.DownloadFiles($jobid) }
+    "accept-all-quoted" { $powertrack.AcceptAllQuoted() }
+    "download-all-delivered" { $powertrack.DownloadAllDelivered() }
 
     default { echo $help }
 }
