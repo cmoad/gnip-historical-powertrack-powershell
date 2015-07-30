@@ -22,6 +22,7 @@ AVAILABLE COMMANDS:
     ... reject-job -jobid <jobid>
     ... download-files -jobid <jobid>
     ... accept-all-quoted
+    ... download-all-delivered
 
 CONFIGURATION:
     Make sure there is an authorization.txt file in this directory with one line that has
